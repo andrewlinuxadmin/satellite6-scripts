@@ -8,9 +8,16 @@ PASS="pass"
 # Repository to enable
 REPO="custom_repo"
 
+# Search string for hosts
+SEARCH=""
+
+if [ "${SEARCH}" != ""]; then
+    HOSTSEARCH="--search='${SEARCH}'"
+fi
+
 
 echo "Listing hosts..."
-hammer host list | grep ^[0-9] | awk '{print $1"#"$3}' > /tmp/hammer_host_list
+hammer host list ${HOSTSEARCH} | grep ^[0-9] | awk '{print $1"#"$3}' > /tmp/hammer_host_list
 if [ "$?" != "0" ]; then
 	echo "Failed to list hosts"
 	exit 1
@@ -28,4 +35,3 @@ for HOST in $(cat /tmp/hammer_host_list); do
 	exit 2
     fi
 done
-
