@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This script allows you to add custom repositories in multiples hosts
+# Tested in Satellite 6.4.z and 6.5.z
+
 # Satellite access information
 SERVER="https://satellite.example.com"
 USER="user"
