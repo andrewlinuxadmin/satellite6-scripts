@@ -4,19 +4,17 @@
 # Tested in Satellite 6.4.0
 # Required: Hammer and GNU Parallel
 
-# Satellite access information
-SERVER="https://localhost"
-USER="user"
-PASS="pass"
-
 # Repository to enable
 REPO="custom_repo"
 
 # Search string for hosts
 SEARCH="name ~ srv"
 
+# Satellite URL
+SERVER="https://localhost"
+
 # Number of parallel execution. Too high a number will cause Satellite performance issues.
-PARALLEL="5"
+PARALLEL="10"
 
 DEBUG=1
 LOGFILE="/root/enable_bulk_custom_repositories"
@@ -37,25 +35,17 @@ enablerepolog() {
 export -f enablerepolog
 
 enablerepo() {
-    SERVER="${1}"
-    USER="${2}"
-    PASS="${3}"
-    REPO="${4}"
-    HOST="${5}"
+    REPO="${1}"
+    HOST="${2}"
     HOST_ID="$(echo "${HOST}" | cut -d'#' -f 1)"
     HOST_NAME="$(echo "${HOST}" | cut -d'#' -f 2)"
-    JSON_DATA="{\"content_overrides\":[{\"content_label\":\"${REPO}\",\"name\":\"enabled\",\"value\":true}]}"
-    URL="${SERVER}/api/v2/hosts/${HOST_ID}/subscriptions/content_override"
-    # TODO: Check response json
-    RESPONSECODE=$(curl -s -o /dev/null -w "%{http_code}" --header "Accept:application/json,version=2" --header "Content-Type:application/json" --request PUT --user "${USER}:${PASS}" --insecure --data "${JSON_DATA}" "${URL}")
-    if [ "$?" == "0" ] && [ "${RESPONSECODE}" == "200" ]; then
+    RESP=$(hammer host subscription content-override --content-label="${REPO}" --host-id="${HOST_ID}" --override-name="enabled" --value="true")
+    if [ "$?" == "0" ]; then
         enablerepolog 2 "\e[32mSuccessfully\e[39m enabled ${REPO} for host ${HOST_NAME}"
     else
         enablerepolog 2 "\e[31mFAILED\e[39m to enable ${REPO} repository for host ${HOST_NAME}"
     fi
-    enablerepolog 3 "URL: ${URL}"
-    enablerepolog 3 "JSON DATA: ${JSON_DATA}"
-    enablerepolog 3 "RESPONSE CODE: ${RESPONSECODE}"
+    enablerepolog 3 "HAMMER RESPONSE: ${RESP}"
 }
 export -f enablerepo
 
@@ -75,4 +65,4 @@ fi
 enablerepolog 1 "Found $(wc -l ${TEMPFILE} | awk '{print $1}') hosts"
 
 enablerepolog 1 "Enabling repo ${REPO}..."
-parallel --will-cite -j ${PARALLEL} enablerepo "${SERVER}" "${USER}" "${PASS}" "${REPO}" < ${TEMPFILE}
+parallel --will-cite -j ${PARALLEL} enablerepo "${REPO}" < ${TEMPFILE}
