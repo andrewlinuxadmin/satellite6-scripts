@@ -2,6 +2,7 @@
 
 # This script allows you to add custom repositories in multiples hosts
 # Tested in Satellite 6.4.0
+# Required: Hammer and GNU Parallel
 
 # Satellite access information
 SERVER="https://localhost"
