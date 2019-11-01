@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script allows you to add custom repositories in multiples hosts
-# Tested in Satellite 6.4.0
+# Tested in Satellite 6.4.0 and 6.5.2.1
 # Required: Hammer and GNU Parallel
 
 # Repository to enable
