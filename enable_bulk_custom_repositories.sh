@@ -39,13 +39,24 @@ enablerepo() {
     HOST="${2}"
     HOST_ID="$(echo "${HOST}" | cut -d'#' -f 1)"
     HOST_NAME="$(echo "${HOST}" | cut -d'#' -f 2)"
-    RESP=$(hammer host subscription content-override --content-label="${REPO}" --host-id="${HOST_ID}" --override-name="enabled" --value="true")
-    if [ "$?" == "0" ]; then
-        enablerepolog 2 "\e[32mSuccessfully\e[39m enabled ${REPO} for host ${HOST_NAME}"
+    CHECK="$(hammer --output=csv --no-headers host subscription product-content --host-id="${HOST_ID}" | grep "${REPO}")"
+    if [ "${CHECK}" != "" ]; then
+        CHECK_ENABLED="$(echo "${CHECK}" | awk -F',' '{print $5}')"
+        if [ "${CHECK_ENABLED}" != "enabled:1" ]; then
+            RESP="$(hammer host subscription content-override --content-label="${REPO}" --host-id="${HOST_ID}" --override-name="enabled" --value="true")"
+            if [ "$?" == "0" ]; then
+                enablerepolog 2 "\e[32mSuccessfully\e[39m enabled ${REPO} for host ${HOST_NAME}"
+            else
+                enablerepolog 2 "\e[31mFAILED\e[39m to enable ${REPO} repository for host ${HOST_NAME}"
+            fi
+            enablerepolog 3 "HAMMER RESPONSE: ${RESP}"
+        else
+            enablerepolog 2 "\e[33mSkipped:\e[39m repository ${REPO} already enabled for host ${HOST_NAME}"
+            enablerepolog 3 "CHECK REPO: ${CHECK}"
+        fi
     else
-        enablerepolog 2 "\e[31mFAILED\e[39m to enable ${REPO} repository for host ${HOST_NAME}"
+        enablerepolog 2 "\e[33mSkipped:\e[39m repository ${REPO} not available for host ${HOST_NAME}."
     fi
-    enablerepolog 3 "HAMMER RESPONSE: ${RESP}"
 }
 export -f enablerepo
 
