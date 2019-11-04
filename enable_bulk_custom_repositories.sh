@@ -76,11 +76,17 @@ if [ "$#" -ne 2 ]; then
     exit 2
 fi
 
-enablerepolog 1 "${DEBUG}" "Checking if repository ${REPO} exists..."
-REPOEXIST="$(hammer --output=csv --no-headers repository list --search="content_label = ${REPO}" | grep -v ^$ | wc -l)"
-if [ "${REPOEXIST}" != "1" ]; then
-    enablerepolog 2 "${DEBUG}" "\e[31mERRO!\e[39m Repository not found."
-    exit 3
+SATELLITE_VERSION="$(rpm -qa satellite)"
+enablerepolog 1 "${DEBUG}" "Satellite version: ${SATELLITE_VERSION}"
+
+SUBVERSION="$(echo "${SATELLITE_VERSION}" | cut -d'.' -f2)"
+if [ "${SUBVERSION}" -ge 5 ]; then
+    enablerepolog 1 "${DEBUG}" "Checking if repository ${REPO} exists..."
+    REPOEXIST="$(hammer --output=csv --no-headers repository list --search="content_label = ${REPO}" | grep -v ^$ | wc -l)"
+    if [ "${REPOEXIST}" != "1" ]; then
+        enablerepolog 2 "${DEBUG}" "\e[31mERRO!\e[39m Repository not found."
+        exit 3
+    fi
 fi
 
 enablerepolog 1 "${DEBUG}" "Listing hosts..."
@@ -101,3 +107,4 @@ enablerepolog 1 "${DEBUG}" "Found $(wc -l ${TEMPFILE} | awk '{print $1}') hosts"
 
 enablerepolog 1 "${DEBUG}" "Enabling repo ${REPO}..."
 parallel --will-cite -j ${PARALLEL} enablerepo "${REPO}" "${DEBUG}" < ${TEMPFILE}
+
