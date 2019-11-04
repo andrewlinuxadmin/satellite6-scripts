@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# This script allows you to add virt-who subscriptions to Activation Keys.
-# Tested in Satellite 6.4.z and 6.5.z
+# DESCRIPTION:  This script allows you to add virt-who subscriptions to Activation Keys
+# TESTED:       Satellite 6.4.0 and 6.5.2.1
+# REQUIRED:     Hammer
+# AUTHOR:       Andrew Max <andrew@linuxadmin.eti.br>
+
 
 # Search for Activation Keys who will receive Virt-Who subscriptions
 AK_SEARCH="name ~ example1 or name ~ example2 or name ~ example3"
