@@ -75,8 +75,9 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
+enablerepolog 1 "Listing capsules..."
 for CAPSULE in $(hammer --output=csv --no-headers capsule list | awk -F',' '{print $2}'); do
-    enablerepolog 3 "Removing capsule ${CAPSULE} from list"
+    enablerepolog 2 "Removing capsule ${CAPSULE} from list"
     sed -i "/^[0-9]\+#${CAPSULE}\$/d" ${TEMPFILE}
 done
 
