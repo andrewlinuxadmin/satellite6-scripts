@@ -74,6 +74,12 @@ if [ "$?" != "0" ]; then
     enablerepolog 2 "\e[31mFAILED\e[39m to list hosts!"
     exit 1
 fi
+
+for CAPSULE in $(hammer --output=csv --no-headers capsule list | awk -F',' '{print $2}'); do
+    enablerepolog 3 "Removing capsule ${CAPSULE} from list"
+    sed -i "/^[0-9]\+#${CAPSULE}\$/d" ${TEMPFILE}
+done
+
 enablerepolog 1 "Found $(wc -l ${TEMPFILE} | awk '{print $1}') hosts"
 
 enablerepolog 1 "Enabling repo ${REPO}..."
