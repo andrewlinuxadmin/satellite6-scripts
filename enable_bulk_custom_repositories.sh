@@ -40,10 +40,6 @@ enablerepo() {
     HOST_ID="$(echo "${HOST}" | cut -d'#' -f 1)"
     HOST_NAME="$(echo "${HOST}" | cut -d'#' -f 2)"
     CHECK="$(hammer --output=csv --no-headers host subscription product-content --host-id="${HOST_ID}" | grep "${REPO}")"
-    if [ "$?" != "0" ]; then
-        enablerepolog 2 "\e[31mFAILED\e[39m to check ${REPO} repository in host ${HOST_NAME}"
-        return
-    fi
     if [ "${CHECK}" != "" ]; then
         CHECK_ENABLED="$(echo "${CHECK}" | grep "enabled:1" | wc -l)"
         if [ "${CHECK_ENABLED}" == "0" ]; then
