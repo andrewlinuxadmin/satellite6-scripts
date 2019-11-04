@@ -41,8 +41,8 @@ enablerepo() {
     HOST_NAME="$(echo "${HOST}" | cut -d'#' -f 2)"
     CHECK="$(hammer --output=csv --no-headers host subscription product-content --host-id="${HOST_ID}" | grep "${REPO}")"
     if [ "${CHECK}" != "" ]; then
-        CHECK_ENABLED="$(echo "${CHECK}" | awk -F',' '{print $5}')"
-        if [ "${CHECK_ENABLED}" != "enabled:1" ]; then
+        CHECK_ENABLED="$(echo "${CHECK}" | grep "enabled:1" | wc -l)"
+        if [ "${CHECK_ENABLED}" != "0" ]; then
             RESP="$(hammer host subscription content-override --content-label="${REPO}" --host-id="${HOST_ID}" --override-name="enabled" --value="true")"
             if [ "$?" == "0" ]; then
                 enablerepolog 2 "\e[32mSuccessfully\e[39m enabled ${REPO} for host ${HOST_NAME}"
@@ -50,6 +50,7 @@ enablerepo() {
                 enablerepolog 2 "\e[31mFAILED\e[39m to enable ${REPO} repository for host ${HOST_NAME}"
             fi
             enablerepolog 3 "HAMMER RESPONSE: ${RESP}"
+            enablerepolog 3 "CHECK REPO: ${CHECK}"
         else
             enablerepolog 2 "\e[33mSkipped:\e[39m repository ${REPO} already enabled for host ${HOST_NAME}"
             enablerepolog 3 "CHECK REPO: ${CHECK}"
