@@ -76,9 +76,10 @@ if [ "$#" -ne 2 ]; then
     exit 2
 fi
 
-REPOEXIST="$(hammer --output=csv --no-headers repository list --search="content_label = ${REPO}" | wc -l)"
+enablerepolog 1 "${DEBUG}" "Checking if ${REPO} exists..."
+REPOEXIST="$(hammer --output=csv --no-headers repository list --search="content_label = ${REPO}" | grep -v ^$ | wc -l)"
 if [ "${REPOEXIST}" != "1" ]; then
-    enablerepolog 1 "${DEBUG}" "\e[31mERRO!\e[39m Repository not found."
+    enablerepolog 2 "${DEBUG}" "\e[31mERRO!\e[39m Repository not found."
     exit 3
 fi
 
