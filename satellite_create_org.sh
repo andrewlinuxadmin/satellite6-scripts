@@ -21,8 +21,13 @@ Red Hat Software Collections for RHEL Server,Red Hat Software Collections RPMs f
 Red Hat Ansible Engine,Red Hat Ansible Engine 2.8 RPMs for Red Hat Enterprise Linux 7 Server,7Server,x86_64
 "
 
+# Use 0 to wait for sync to finish
 SYNC_ASYNC=0
+
+# Choice sync interval: hourly, daily  or weekly
 SYNC_PLAN_INTERVAL="daily"
+
+# Use 1 for debug mode
 DEBUG=1
 
 
