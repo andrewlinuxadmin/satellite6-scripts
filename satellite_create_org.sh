@@ -24,7 +24,7 @@ Red Hat Ansible Engine,Red Hat Ansible Engine 2.8 RPMs for Red Hat Enterprise Li
 "
 
 # Use 0 to wait for sync to finish
-SYNC_ASYNC=0
+ASYNC=0
 
 # Choice sync interval: hourly, daily  or weekly
 SYNC_PLAN_INTERVAL="daily"
@@ -129,10 +129,11 @@ log 1 "${DEBUG}" "Synchronize repositories for organization ${ORG}..."
 for SYNC_REPO in $(hammer --output=csv --no-headers repository list --organization="${ORG}" | awk -F',' '{print $1","$2}'); do
 	SYNC_REPO_ID="$(echo "${SYNC_REPO}" | awk -F',' '{print $1}')"
 	SYNC_REPO_NAME="$(echo "${SYNC_REPO}" | awk -F',' '{print $2}')"
-	log 2 "${DEBUG}" "Sync repository \"${SYNC_REPO_NAME}\"..."
-	if [ "${SYNC_ASYNC}" == "0" ]; then
+	if [ "${ASYNC}" == "0" ]; then
+		log 2 "${DEBUG}" "Sync repository \"${SYNC_REPO_NAME}\"..."
 		hammer repository synchronize --organization="${ORG}" --id="${SYNC_REPO_ID}"
 	else
+		log 2 "${DEBUG}" "Start sync repository \"${SYNC_REPO_NAME}\" in async mode..."
 		hammer repository synchronize --organization="${ORG}" --id="${SYNC_REPO_ID}" --async
 	fi
 done
