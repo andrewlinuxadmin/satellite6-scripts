@@ -77,7 +77,7 @@ fi
 log 1 "${DEBUG}" "Creating organization ${ORG}..."
 ORG_EXIST="$(hammer --output=csv --no-headers organization list --search="label = ${ORG}" 2>/dev/null | grep -v ^$ | wc -l)"
 if [ "${ORG_EXIST}" == "0" ]; then
-	ORG_RESP="$(hammer organization create --name="${ORG}" --label="${ORG}" --location="${LOCATION}" --puppet-environment-ids=1)"
+	ORG_RESP="$(hammer organization create --name="${ORG}" --label="${ORG}" --location="${LOCATION}" --environment-ids=1)"
 	if [ "$?" != "0" ]; then
 		log 2 "${DEBUG}" "ERROR: Create organization failed!"
 		exit 3
