@@ -3,6 +3,8 @@
 
 # Usage:
 #   ./satellite_create_org.sh 'organization_name' 'location_name' '/path/to/manifest/file.zip'
+#
+# Tested only in Satellite 6.6
 
 
 ORG="${1}"
