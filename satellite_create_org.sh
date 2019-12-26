@@ -42,7 +42,7 @@ log() {
 
 
 if [ "$#" -ne 3 ]; then
-    echo "Usage: ${0} 'organization_name' 'location_name' '/path/to/manifest/file'"
+    echo "Usage: ${0} 'organization_name' 'location_name' '/path/to/manifest/file.zip'"
     exit 1
 fi
 
